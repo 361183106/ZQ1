@@ -1,11 +1,25 @@
-
-
-const jobname = '九章头条'
+const jobname = 'ttdt'
+const { timeStamp } = require('console');
+const { MD5 } = require('crypto-js');
 const $ = Env(jobname)
-
-let taskmap = new Map();
-let articleidarr = [];
-let TokenArr = ['HuLP9Bf3U2WmXGi1egXgxUgB3_HXacQS','JxeYp81FZZ4ssTTlyW9aMZM_8xFDfuHN','V0s4ovDFiA-1EI9aHAM_rkwKOtidFLw_'];
+//var sd = require('silly-datetime');
+//let articlebody = require("../JSON/Youth_common.json");
+let currenttime;
+let md5str;
+let sign;
+let uq_idarr = [];
+let task_id;
+let session_id;
+let pl_id
+let answerarr = ['A', 'B', 'C', 'D'];
+let imei
+let theresult
+let index
+$.message = "";
+imeiarr = [
+   
+    "F7CDEA26-CF2C-49F3-8174-1B4998B9B556"
+]
 !(async () => {
     await all();
 })()
@@ -17,42 +31,118 @@ let TokenArr = ['HuLP9Bf3U2WmXGi1egXgxUgB3_HXacQS','JxeYp81FZZ4ssTTlyW9aMZM_8xFD
     })
 
 async function all() {
-    //nodejs运行
-    for (let i = 0; i < TokenArr.length; i++) {
-        $.log(`开始执行第${i+1}个账号`);
-        Token=TokenArr[i];
-        await DailySign();
-        await $.wait(randomNum(0, 1));
-        await DailyCheck();
-        await $.wait(randomNum(0, 1));
-        await ArticelsList();
-        for (let i = 0; i < articleidarr.length; i++) {
-            await ArticleFinish(articleidarr[i]);
-            await $.wait(randomNum(0, 1));
+
+    for (let imeiindex = 0; imeiindex < imeiarr.length; imeiindex++) {
+        $.log(`\n第${imeiindex + 1}个账号执行任务:`)
+        imei = imeiarr[imeiindex];
+        currenttime = parseInt(new Date().getTime() / 1000)//当前时间戳；
+        md5str = `imei=${imei}&time=${currenttime}&key=NcfVw#l5A!gQEO5@`
+        sign = MD5(md5str).toString().toUpperCase();
+        await login();
+        
+                while(1) {
+                    currenttime = parseInt(new Date().getTime() / 1000)//当前时间戳；
+                    md5str = `session_id=${session_id}&time=${currenttime}&key=NcfVw#l5A!gQEO5@`
+                    sign = MD5(md5str).toString().toUpperCase();
+                    await getQuestionList()
+                    //await $.wait(1000);
+                    for (let i = 0; i < uq_idarr.length; i++) {
+                        for (let j = 0; j < answerarr.length; j++) {
+                            currenttime = parseInt(new Date().getTime() / 1000)//当前时间戳；
+                            md5str = `answer=${answerarr[j]}&session_id=${session_id}&time=${currenttime}&uq_id=${uq_idarr[i]}&key=NcfVw#l5A!gQEO5@`
+                            sign = MD5(md5str).toString().toUpperCase();
+                            theresult = await getAnsewr(j, i);
+                            if (theresult == true) {
+                                currenttime = parseInt(new Date().getTime() / 1000)//当前时间戳；
+                                md5str = `pl_id=${pl_id}&session_id=${session_id}&time=${currenttime}&key=NcfVw#l5A!gQEO5@`
+                                sign = MD5(md5str).toString().toUpperCase();
+                                await doubleReward();
+                            }
+                            if (theresult == "100") {
+                                break;
+                            }
+                        }
+                        if (theresult == "100") {
+                            break;
+                        }
+                    }
+                    if (theresult == "100") {
+                        break;
+                    }
+                }
+        
+                for (task_id = 1; task_id <= 30; task_id++) {
+                    currenttime = parseInt(new Date().getTime() / 1000)//当前时间戳；
+                    md5str = `session_id=${session_id}&task_id=${task_id}&time=${currenttime}&key=NcfVw#l5A!gQEO5@`
+                    sign = MD5(md5str).toString().toUpperCase();
+                    theresult = await getTaskAward()
+                    if (theresult == true) {
+                        currenttime = parseInt(new Date().getTime() / 1000)//当前时间戳；
+                        md5str = `pl_id=${pl_id}&session_id=${session_id}&time=${currenttime}&key=NcfVw#l5A!gQEO5@`
+                        sign = MD5(md5str).toString().toUpperCase();
+                        await doubleReward();
+                    }
+                }
+        
+        let typearr = [24, 6, 5, 12, 24, 24, 7, 14, 29];
+        for (index = 1; index <= 9; index++) {
+            type = typearr[index - 1];
+            currenttime = parseInt(new Date().getTime() / 1000);//当前时间戳；
+            md5str = `is_new=1&session_id=${session_id}&time=${currenttime}&type=${type}&key=NcfVw#l5A!gQEO5@`;
+            sign = MD5(md5str).toString().toUpperCase();
+            for (let ci = 0; ci < 15; ci++)
+                await clickLog();
+
+            currenttime = parseInt(new Date().getTime() / 1000)//当前时间戳；
+            md5str = `index=${index}&session_id=${session_id}&time=${currenttime}&key=NcfVw#l5A!gQEO5@`
+            sign = MD5(md5str).toString().toUpperCase();
+            await collectActive();
         }
 
-        for (let i = 0; i < 5; i++) {
-            await ArticleShare();
-            await $.wait(randomNum(0, 1));
+
+        currenttime = parseInt(new Date().getTime() / 1000);//当前时间戳；
+        md5str = `is_new=1&session_id=${session_id}&time=${currenttime}&type=${type}&key=NcfVw#l5A!gQEO5@`;
+        sign = MD5(md5str).toString().toUpperCase();
+        await clickLog();
+
+
+        currenttime = parseInt(new Date().getTime() / 1000);//当前时间戳；
+        md5str = `session_id=${session_id}&time=${currenttime}&key=NcfVw#l5A!gQEO5@`;
+        sign = MD5(md5str).toString().toUpperCase();
+        await getRedluckyMoney();
+
+
+        type_idarr = [101, 102, 103, 301]
+        for (let ti = 0; ti < type_idarr.length; ti++) {
+            type_id = type_idarr[ti];
+            currenttime = parseInt(new Date().getTime() / 1000)//当前时间戳；
+            md5str = `pay_type=2&session_id=${session_id}&time=${currenttime}&type_id=${type_id}&key=NcfVw#l5A!gQEO5@`
+            sign = MD5(md5str).toString().toUpperCase();
+            await withdrawThirdApply();
+            await $.wait(2000);
         }
-        for (let i = 0; i < 3; i++) {
-            await TaskAD(8);
-            await $.wait(randomNum(0, 1));
-            await TaskAD(9);
-            await $.wait(randomNum(0, 1));
-            await TaskAD(10);
-            await $.wait(randomNum(0, 1));
-            await TaskAD(11);
-        }
+
+
+        currenttime = parseInt(new Date().getTime() / 1000);//当前时间戳；
+        md5str = `session_id=${session_id}&time=${currenttime}&key=NcfVw#l5A!gQEO5@`;
+        sign = MD5(md5str).toString().toUpperCase();
+        await withdraw();
+
     }
+    $.msg($.message);
+
 }
 
 
-function TaskAD(TaskID) {
+
+
+
+function getRedluckyMoney() {
     return new Promise((resolve, reject) => {
-        const url = "https://api.st615.com/v1/task/ads";
-        const headers = {};
-        const body = `id=${TaskID}&token=${Token}`;
+        const url = "http://pic.anngudao.com/index/money/getRedluckyMoney";
+        const headers = {
+        };
+        const body = `session_id=${session_id}&sign=${sign}&time=${currenttime}`;
         const request = {
             url: url,
             headers: headers,
@@ -61,58 +151,12 @@ function TaskAD(TaskID) {
 
         $.post(request, async (error, response, data) => {
             try {
-                // $.log(data);
-                let result = JSON.parse(data);
-                $.log(`【视频】${result.msg}，获得金币+${result.data.coin}`)
-            } catch (e) {
-                $.log(e)
-            }
-            resolve();
-        })
-    })
-}
-
-function DailySign() {
-    return new Promise((resolve, reject) => {
-        const url = "https://api.st615.com/v1/sign/sign";
-        const headers = {};
-        const body = `token=${Token}`;
-        const request = {
-            url: url,
-            headers: headers,
-            body: body
-        };
-
-        $.post(request, async (error, response, data) => {
-            try {
-                //$.log(data);
-                let result = JSON.parse(data);
-                $.log(`【签到】${result.msg}`)
-
-            } catch (e) {
-                $.log(e)
-            }
-            resolve();
-        })
-    })
-}
-
-function DailyCheck() {
-    return new Promise((resolve, reject) => {
-        const url = "https://api.st615.com/v1/task/clock";
-        const headers = {};
-        const body = `is_double=0&token=${Token}`;
-        const request = {
-            url: url,
-            headers: headers,
-            body: body
-        };
-
-        $.post(request, async (error, response, data) => {
-            try {
-                let result = JSON.parse(data);
-                if (result.code == 0) {
-                    $.log(`【打卡】${result.msg}`)
+                if (error) {
+                    $.log('请求失败');
+                }
+                else {
+                    result = JSON.parse(data);
+                    $.log(`昨日奖励:${result.message}`)
                 }
             } catch (e) {
                 $.log(e)
@@ -122,11 +166,14 @@ function DailyCheck() {
     })
 }
 
-function ArticleShare() {
+
+
+function withdrawThirdApply() {
     return new Promise((resolve, reject) => {
-        const url = "https://api.st615.com/v1/article/share";
-        const headers = {};
-        const body = `token=${Token}`;
+        const url = "http://pic.anngudao.com/index/money/withdrawThirdApply";
+        const headers = {
+        };
+        const body = `pay_type=2&session_id=${session_id}&sign=${sign}&time=${currenttime}&type_id=${type_id}`;
         const request = {
             url: url,
             headers: headers,
@@ -135,9 +182,12 @@ function ArticleShare() {
 
         $.post(request, async (error, response, data) => {
             try {
-                let result = JSON.parse(data);
-                if (result.code == 0) {
-                    $.log(`【分享】${result.msg}`)
+                if (error) {
+                    $.log('请求失败');
+                }
+                else {
+                    result = JSON.parse(data);
+                    $.log(`提现：提现类型${type_id}，${result.message}`)
                 }
             } catch (e) {
                 $.log(e)
@@ -147,11 +197,27 @@ function ArticleShare() {
     })
 }
 
-function ArticleFinish(articleid) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function withdraw() {
     return new Promise((resolve, reject) => {
-        const url = "https://api.st615.com/v1/article/finish";
-        const headers = {};
-        const body = `id=${articleid}&token=${Token}`;
+        const url = "http://pic.anngudao.com/index/money/withdraw";
+        const headers = {
+        };
+        const body = `session_id=${session_id}&sign=${sign}&time=${currenttime}`;
         const request = {
             url: url,
             headers: headers,
@@ -160,9 +226,12 @@ function ArticleFinish(articleid) {
 
         $.post(request, async (error, response, data) => {
             try {
-                let result = JSON.parse(data);
-                if (result.code == 0) {
-                    $.log(`【阅读】${result.msg}，获得金币+${result.data.coin}`)
+                if (error) {
+                    $.log('请求失败');
+                }
+                else {
+                    result = JSON.parse(data);
+                    $.message += `【用户昵称】${result.data.wxNickname}\n【用户余额】${result.data.user_money}\n\n`
                 }
             } catch (e) {
                 $.log(e)
@@ -172,22 +241,305 @@ function ArticleFinish(articleid) {
     })
 }
 
-function ArticelsList() {
+
+function finishAction(action) {
     return new Promise((resolve, reject) => {
-        const url = `https://api.st615.com/v1/article/list?cid=0&page=3&limit=60&type=0&terminal=Apple&version=1.2.3&token=${Token}`;
-        const headers = {};
+        const url = `http://pic.anngudao.com/index/user/${action}`;
+        const headers = {
+
+        };
+        const body = `session_id=${session_id}&sign=${sign}&time=${currenttime}`;
         const request = {
             url: url,
-            headers: headers
+            headers: headers,
+            body: body
         };
 
-        $.get(request, async (error, response, data) => {
+        $.post(request, async (error, response, data) => {
             try {
-                let result = JSON.parse(data);
-                if (result.code == 0) {
-                    for (let i = 0; i < result.data.list.length; i++) {
-                        if (result.data.list[i].type == 2)
-                            articleidarr.push(result.data.list[i].id);
+                if (error) {
+                    $.log('请求失败');
+                }
+                else {
+                    result = JSON.parse(data);
+                    $.log(`${result.message}`)
+                }
+            } catch (e) {
+                $.log(e)
+            }
+            resolve();
+        })
+    })
+}
+
+
+
+function clickLog() {
+    return new Promise((resolve, reject) => {
+        const url = "http://pic.anngudao.com/index/api/clickLog";
+        const headers = {
+
+        };
+        const body = `is_new=1&session_id=${session_id}&sign=${sign}&time=${currenttime}&type=${type}`;
+        const request = {
+            url: url,
+            headers: headers,
+            body: body
+        };
+
+        $.post(request, async (error, response, data) => {
+            try {
+                if (error) {
+                    $.log('请求失败');
+                }
+                else {
+                    result = JSON.parse(data);
+                    $.log(`${result.message}`)
+                }
+            } catch (e) {
+                $.log(e)
+            }
+            resolve();
+        })
+    })
+}
+
+
+
+
+
+
+function collectActive() {
+    return new Promise((resolve, reject) => {
+        const url = "http://pic.anngudao.com/dati/free/collectActive";
+        const headers = {
+
+        };
+        const body = `index=${index}&session_id=${session_id}&sign=${sign}&time=${currenttime}`;
+        const request = {
+            url: url,
+            headers: headers,
+            body: body
+        };
+
+        $.post(request, async (error, response, data) => {
+            try {
+                if (error) {
+                    $.log('请求失败');
+                }
+                else {
+                    result = JSON.parse(data);
+                    $.log(`${result.message}`)
+                }
+            } catch (e) {
+                $.log(e)
+            }
+            resolve();
+        })
+    })
+}
+
+
+
+
+
+
+
+
+
+
+function getAnsewr(aindex, uindex) {
+    return new Promise((resolve, reject) => {
+        const url = "http://pic.anngudao.com/dati/index/getAnswer";
+        const headers = {
+
+        };
+        const body = `answer=${answerarr[aindex]}&session_id=${session_id}&sign=${sign}&time=${currenttime}&uq_id=${uq_idarr[uindex]}`;
+        const request = {
+            url: url,
+            headers: headers,
+            body: body
+        };
+
+        $.post(request, async (error, response, data) => {
+            try {
+                if (error) {
+                    $.log('请求失败');
+                }
+                else {
+                    result = JSON.parse(data);
+                    if (result.result == 1 && result.data.res_code == 1) {
+                        $.log(`第${uindex + 1}题回答:正确`)
+                        pl_id = result.data.pl_id;
+                        resolve(true);
+
+                    }
+                    if (result.result == 1 && result.data.res_code == 0) {
+                        $.log(`第${uindex + 1}题回答:错误`)
+                        resolve(false);
+                    }
+                    if (result.result == 0 && result.message.indexOf("明天继续加油") != -1) {
+                        $.log(`${result.message}`)
+                        resolve("100");
+                    }
+                }
+            } catch (e) {
+                $.log(e)
+            }
+            resolve();
+        })
+    })
+}
+
+
+
+
+function getQuestionList() {
+    return new Promise((resolve, reject) => {
+        const url = "http://pic.anngudao.com/dati/index/getQuestionList";
+        const headers = {
+
+        };
+        const body = `session_id=${session_id}&sign=${sign}&time=${currenttime}`;
+        const request = {
+            url: url,
+            headers: headers,
+            body: body
+        };
+
+        $.post(request, async (error, response, data) => {
+            try {
+                if (error) {
+                    $.log('请求失败');
+                }
+                else {
+
+                    result = JSON.parse(data);
+                    let temp = "";
+                    uq_idarr = [];
+                    for (let i = 0; i < result.data.question_list.length; i++) {
+                        uq_idarr.push(result.data.question_list[i].uq_id);
+                        temp += result.data.question_list[i].uq_id;
+                        temp += " ";
+                    }
+                    $.log(`获取uq_id成功，uq_id=${temp}`)
+
+                }
+            } catch (e) {
+                $.log(e)
+            }
+            resolve();
+        })
+    })
+}
+
+
+
+function getTaskAward() {
+    return new Promise((resolve, reject) => {
+        const url = "http://pic.anngudao.com/dati/task/getTaskAward";
+        const headers = {
+
+        };
+        const body = `session_id=${session_id}&sign=${sign}&task_id=${task_id}&time=${currenttime}`;
+        const request = {
+            url: url,
+            headers: headers,
+            body: body
+        };
+
+        $.post(request, async (error, response, data) => {
+            try {
+                if (error) {
+                    $.log('请求失败');
+                }
+                else {
+
+                    result = JSON.parse(data);
+                    if (result.message.indexOf("操作成功") != -1) {
+                        $.log(`${result.message}`)
+                        pl_id = result.data.pl_id;
+                        resolve(true)
+                    }
+                    else {
+                        $.log(`${result.message}`)
+                        resolve(false)
+
+                    }
+                }
+            } catch (e) {
+                $.log(e)
+            }
+
+        })
+    })
+}
+
+
+
+function login() {
+    return new Promise((resolve, reject) => {
+        const url = "http://pic.anngudao.com/index/user/login";
+        const headers = {
+            "App-Refer": "2"
+        };
+        const body = `imei=${imei}&sign=${sign}&time=${currenttime}`;
+        const request = {
+            url: url,
+            headers: headers,
+            body: body
+        };
+
+        $.post(request, async (error, response, data) => {
+            try {
+                if (error) {
+                    $.log('请求失败');
+                }
+                else {
+                    //$.log(data);
+                    result = JSON.parse(data)
+                    if (result.result == 1) {
+                        session_id = result.data.session_id
+                        $.log(`获取session_id成功，session_id:${session_id}`);
+                        resolve(true);
+                    }
+                    else {
+                        $.log("登录失败");
+                        resolve(false);
+                    }
+
+                }
+            } catch (e) {
+                $.log(e)
+            }
+
+        })
+    })
+}
+
+
+
+function doubleReward() {
+    return new Promise((resolve, reject) => {
+        const url = "http://pic.anngudao.com/index/user/doubleReward";
+        const headers = {
+        };
+        const body = `pl_id=${pl_id}&session_id=${session_id}&sign=${sign}&time=${currenttime}`;
+        const request = {
+            url: url,
+            headers: headers,
+            body: body
+        };
+
+        $.post(request, async (error, response, data) => {
+            try {
+                if (error) {
+                    $.log('请求失败');
+                }
+                else {
+                    result = JSON.parse(data);
+                    if (result.result == 1) {
+                        $.log(`${result.message}`)
                     }
                 }
             } catch (e) {
@@ -204,22 +556,6 @@ function ArticelsList() {
 
 
 
-
-
-
-function randomNum(minNum, maxNum) {
-    switch (arguments.length) {
-        case 1:
-            return parseInt(Math.random() * minNum + 1, 10);
-            break;
-        case 2:
-            return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
-            break;
-        default:
-            return 0;
-            break;
-    }
-}
 
 function Env(t, e) {
     class s {

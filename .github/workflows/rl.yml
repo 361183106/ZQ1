@@ -1,9 +1,9 @@
-name: jscfz
+name: rl
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '35 */4 * * *'
+    - cron: '*/35 * * * *'
   watch:
     types: started
   repository_dispatch:
@@ -31,9 +31,9 @@ jobs:
       - name: npm install
         run: |
           npm install
-      - name: '运行 【jscfz】'
+      - name: '运行 【rl】'
         run: |
-          node Task/jscfz.js
+          node Task/rl.js
         env:
           #RLURL: ${{ secrets.RLURL }}
           #RLHEADER: ${{ secrets.RLHEADER }}

@@ -1,9 +1,9 @@
-name: 电视家
+name: ttdt
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 */8 * * *'
   watch:
     types: started
   repository_dispatch:
@@ -31,9 +31,9 @@ jobs:
       - name: npm install
         run: |
           npm install
-      - name: '运行 【电视家】'
+      - name: '运行 【ttdt】'
         run: |
-          node Task/dsj.js
+          node Task/ttdt.js
         env:
           #RLURL: ${{ secrets.RLURL }}
           #RLHEADER: ${{ secrets.RLHEADER }}
